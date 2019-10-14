@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="css/reset.css">
     <link rel="stylesheet" type="text/css" href="css/iconfont.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" href="./js/bootstrap/css/bootstrap.min.css">
 </head>
 
 <body>
@@ -25,11 +26,82 @@
                 <i class="iconfont icon-key"></i>
                 <input type="text" class="input_txt" placeholder="邮箱/手机号">
                 <input type="password" class="input_pass" placeholder="密码">
-                <input type="submit" class="input_sub" value="登 录">
+                <!-- <input type="submit" class="input_sub" value="登 录"> -->
+                <input type="button" class="input_sub" value="登 录">
             </form>
         </div>
 
-    </div> 
+    </div>
+    <!-- 进行提示使用的模态框 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">提示信息</h4>
+                </div>
+                <div class="modal-body">
+                    <!-- 模态框内容区 -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">确定</button>
+                    <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./js/jquery-1.12.4.min.js"></script>
+    <script src="./tool/config.js"></script>
+    <script src="./tool/user.js"></script>
+    <script src="./js/bootstrap/js/bootstrap.min.js"></script>
+    <script>
+        //   结构的修改：
+        //     登录按钮时submit功能的，我们希望使用ajax，应改为普通按钮或者e.prevebtDefault
+
+        // 功能简介：
+        //     1 点击登录按钮后，获取用户名和密码
+        //     2 检测内容是否为空
+        //     3 如果不为空，通过接口发送给服务端检测
+        //     4 根据检测结果进行对应处理：
+        //         - 成功：跳转到首页
+        //         - 失败：提示
+        //     5 美化弹框
+
+        //实现功能：
+        //1 给登录按钮设置点击事件
+        $('.input_sub').on('click', function() {
+            // 获取用户名和密码进行检测
+            var user_name = $('.input_txt').val();
+            var password = $('.input_pass').val();
+            if (user_name.trim() === '' || password.trim() === '') {
+                // alert('请完整填写表单');
+                //模态框
+                $('#myModal').modal('show')
+                    .find('.modal-body').text('请完整填写');
+                return; //因为后面要使用ajax，所以return
+            }
+            //3 发送请求
+            user.login({
+
+                data: {
+                    user_name: user_name,
+                    password: password
+                },
+                //用户检测后的处理方式
+                callback: function(res) {
+                    // 4 根据服务端响应的状态进行对应操作
+                    if (res.code === 200) {
+                        location.href = './index.html';
+                    } else {
+                        // alert('用户名或密码错误!~');
+                        // 模态框提示
+                        $('#myModal').modal('show')
+                            .find('.modal-body').text('用户名或密码错误');
+                    }
+                }
+            });
+        })
+    </script>
 
 </body>
 
